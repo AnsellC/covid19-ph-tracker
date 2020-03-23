@@ -1,3 +1,4 @@
+import 'package:covid/analytics.dart';
 import 'package:covid/providers/stats_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -278,6 +279,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              analytics.logEvent(name: 'refresh');
               provider.refresh();
             },
           ),
