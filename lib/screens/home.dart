@@ -85,7 +85,11 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
-            provider.stats != null ? _stats(context) : _loading(),
+            provider.stats == null
+                ? (provider.timedOut == false
+                    ? _loading()
+                    : _errorOccured(context))
+                : _stats(context),
             Flexible(
               flex: 0,
               child: Container(
@@ -129,10 +133,49 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _refreshButton(BuildContext context) {
+    final provider = Provider.of<StatsProvider>(context);
+    return FlatButton(
+      color: Colors.redAccent,
+      child: Text(
+        'Refresh',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed: () {
+        analytics.logEvent(name: 'refresh');
+        provider.refresh();
+      },
+    );
+  }
+
   Widget _loading() {
     return Expanded(
       child: SpinKitDoubleBounce(
         color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _errorOccured(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'An error occured. Make sure you have an active internet connection.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          _refreshButton(context),
+        ],
       ),
     );
   }
@@ -269,20 +312,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 20.0,
           ),
-          FlatButton(
-            color: Colors.redAccent,
-            child: Text(
-              'Refresh',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              analytics.logEvent(name: 'refresh');
-              provider.refresh();
-            },
-          ),
+          _refreshButton(context),
         ],
       ),
     );

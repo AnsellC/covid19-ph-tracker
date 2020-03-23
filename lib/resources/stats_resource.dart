@@ -8,7 +8,11 @@ class StatsResource {
 
   Future<Stats> getStats() async {
     final response =
-        await client.get('https://covid19.mathdro.id/api/countries/ph');
+        await client.get('https://covid19.mathdro.id/api/countries/ph').timeout(
+              Duration(
+                seconds: 10,
+              ),
+            );
 
     if (response.statusCode != 200) {
       return null;
