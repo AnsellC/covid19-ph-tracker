@@ -38,6 +38,8 @@ lib/generated_plugin_registrant.dart
 
 # auth
 android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
 # keys
 android/key.properties
+
