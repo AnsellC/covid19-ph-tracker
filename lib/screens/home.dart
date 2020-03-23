@@ -2,10 +2,53 @@ import 'package:covid/providers/stats_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_animations/simple_animations.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
+  final boxTween1 = MultiTrackTween([
+    Track('position').add(
+      Duration(milliseconds: 1000),
+      Tween(
+        begin: -10.0,
+        end: 0.0,
+      ),
+      curve: Curves.elasticOut,
+    ),
+    Track('opacity').add(
+      Duration(
+        milliseconds: 300,
+      ),
+      Tween(
+        begin: 0.0,
+        end: 1.0,
+      ),
+      curve: Curves.easeInOut,
+    ),
+  ]);
+
+  final boxTween2 = MultiTrackTween([
+    Track('position').add(
+      Duration(milliseconds: 1000),
+      Tween(
+        begin: 10.0,
+        end: 0.0,
+      ),
+      curve: Curves.elasticOut,
+    ),
+    Track('opacity').add(
+      Duration(
+        milliseconds: 300,
+      ),
+      Tween(
+        begin: 0.0,
+        end: 1.0,
+      ),
+      curve: Curves.easeInOut,
+    ),
+  ]);
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<StatsProvider>(context);
@@ -93,6 +136,31 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _box(BuildContext context, String title, String content) {
+    return Container(
+      margin: EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.redAccent,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      padding: EdgeInsets.all(
+        10.0,
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            title,
+            style: Theme.of(context).textTheme.title,
+          ),
+          Text(
+            content,
+            style: Theme.of(context).textTheme.subtitle,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _stats(BuildContext context) {
     final provider = Provider.of<StatsProvider>(context);
     return Expanded(
@@ -103,52 +171,43 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                // Confirmed Cases Box
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    padding: EdgeInsets.all(
-                      10.0,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Confirmed Cases',
-                          style: Theme.of(context).textTheme.title,
+                  child: ControlledAnimation(
+                    duration: boxTween1.duration,
+                    tween: boxTween1,
+                    builder: (BuildContext context, animation) {
+                      return Opacity(
+                        opacity: animation['opacity'],
+                        child: Transform.translate(
+                          offset: Offset(0.0, animation['position']),
+                          child: _box(
+                            context,
+                            'Confirmed Cases',
+                            provider.stats.confirmed.toString(),
+                          ),
                         ),
-                        Text(
-                          provider.stats.confirmed.toString(),
-                          style: Theme.of(context).textTheme.subtitle,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    padding: EdgeInsets.all(
-                      10.0,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Recovered',
-                          style: Theme.of(context).textTheme.title,
+                  child: ControlledAnimation(
+                    duration: boxTween1.duration,
+                    tween: boxTween1,
+                    builder: (BuildContext context, animation) {
+                      return Opacity(
+                        opacity: animation['opacity'],
+                        child: Transform.translate(
+                          offset: Offset(0.0, animation['position']),
+                          child: _box(
+                            context,
+                            'Recovered',
+                            provider.stats.recovered.toString(),
+                          ),
                         ),
-                        Text(
-                          provider.stats.recovered.toString(),
-                          style: Theme.of(context).textTheme.subtitle,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -159,51 +218,41 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    padding: EdgeInsets.all(
-                      10.0,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Deaths',
-                          style: Theme.of(context).textTheme.title,
+                  child: ControlledAnimation(
+                    duration: boxTween2.duration,
+                    tween: boxTween2,
+                    builder: (BuildContext context, animation) {
+                      return Opacity(
+                        opacity: animation['opacity'],
+                        child: Transform.translate(
+                          offset: Offset(0.0, animation['position']),
+                          child: _box(
+                            context,
+                            'Deaths',
+                            provider.stats.deaths.toString(),
+                          ),
                         ),
-                        Text(
-                          provider.stats.deaths.toString(),
-                          style: Theme.of(context).textTheme.subtitle,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    padding: EdgeInsets.all(
-                      10.0,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Death Rate',
-                          style: Theme.of(context).textTheme.title,
+                  child: ControlledAnimation(
+                    duration: boxTween2.duration,
+                    tween: boxTween2,
+                    builder: (BuildContext context, animation) {
+                      return Opacity(
+                        opacity: animation['opacity'],
+                        child: Transform.translate(
+                          offset: Offset(0.0, animation['position']),
+                          child: _box(
+                            context,
+                            'Death Rate',
+                            '${provider.stats.deathRate.toString()}%',
+                          ),
                         ),
-                        Text(
-                          "${provider.stats.deathRate.toString()}%",
-                          style: Theme.of(context).textTheme.subtitle,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ],
