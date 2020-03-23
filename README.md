@@ -1,16 +1,11 @@
-# covid
+## About
 
-A new Flutter project.
+Covid19-PH Tracker is a cross-platform app written in Dart/Flutter.
 
-## Getting Started
+## API Credits
 
-This project is a starting point for a Flutter application.
+The API used in this project is from https://covid19.mathdro.id/
 
-A few resources to get you started if this is your first Flutter project:
+## License
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
