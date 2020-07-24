@@ -1,35 +1,17 @@
 import 'package:covid/analytics.dart';
+import 'package:covid/providers/rss_provider.dart';
 import 'package:covid/providers/stats_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
-  final boxTween1 = MultiTrackTween([
-    Track('position').add(
-      Duration(milliseconds: 1000),
-      Tween(
-        begin: -10.0,
-        end: 0.0,
-      ),
-      curve: Curves.elasticOut,
-    ),
-    Track('opacity').add(
-      Duration(
-        milliseconds: 300,
-      ),
-      Tween(
-        begin: 0.0,
-        end: 1.0,
-      ),
-      curve: Curves.easeInOut,
-    ),
-  ]);
-
-  final boxTween2 = MultiTrackTween([
+  final formatter = new NumberFormat("#,###");
+  final boxTween = MultiTrackTween([
     Track('position').add(
       Duration(milliseconds: 1000),
       Tween(
@@ -69,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       'CovidPH',
-                      style: Theme.of(context).textTheme.headline,
+                      style: Theme.of(context).textTheme.headline1,
                     ),
                     SizedBox(
                       width: 10,
@@ -78,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                       'Tracker',
                       style: Theme.of(context)
                           .textTheme
-                          .headline
+                          .headline1
                           .copyWith(fontWeight: FontWeight.w200),
                     ),
                   ],
@@ -159,6 +141,36 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _news(BuildContext context) {
+    final rssProvider = Provider.of<RssProvider>(context);
+    print(rssProvider.feed);
+    return Container(
+      padding: EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            'News',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 5,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return Text('h');
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _errorOccured(BuildContext context) {
     return Expanded(
       child: Column(
@@ -183,6 +195,7 @@ class HomeScreen extends StatelessWidget {
   Widget _box(BuildContext context, String title, String content) {
     return Container(
       margin: EdgeInsets.all(10.0),
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Colors.redAccent,
         borderRadius: BorderRadius.circular(5.0),
@@ -194,11 +207,17 @@ class HomeScreen extends StatelessWidget {
         children: <Widget>[
           Text(
             title,
-            style: Theme.of(context).textTheme.title,
+            style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           Text(
             content,
-            style: Theme.of(context).textTheme.subtitle,
+            style: Theme.of(context).textTheme.headline5.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
           ),
         ],
       ),
@@ -207,6 +226,8 @@ class HomeScreen extends StatelessWidget {
 
   Widget _stats(BuildContext context) {
     final provider = Provider.of<StatsProvider>(context);
+    final rssProvider = Provider.of<RssProvider>(context);
+
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -218,8 +239,8 @@ class HomeScreen extends StatelessWidget {
                 // Confirmed Cases Box
                 Expanded(
                   child: ControlledAnimation(
-                    duration: boxTween1.duration,
-                    tween: boxTween1,
+                    duration: boxTween.duration,
+                    tween: boxTween,
                     builder: (BuildContext context, animation) {
                       return Opacity(
                         opacity: animation['opacity'],
@@ -228,7 +249,7 @@ class HomeScreen extends StatelessWidget {
                           child: _box(
                             context,
                             'Confirmed Cases',
-                            provider.stats.confirmed.toString(),
+                            formatter.format(provider.stats.confirmed),
                           ),
                         ),
                       );
@@ -237,8 +258,8 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: ControlledAnimation(
-                    duration: boxTween1.duration,
-                    tween: boxTween1,
+                    duration: boxTween.duration,
+                    tween: boxTween,
                     builder: (BuildContext context, animation) {
                       return Opacity(
                         opacity: animation['opacity'],
@@ -247,7 +268,7 @@ class HomeScreen extends StatelessWidget {
                           child: _box(
                             context,
                             'Recovered',
-                            provider.stats.recovered.toString(),
+                            formatter.format(provider.stats.recovered),
                           ),
                         ),
                       );
@@ -263,8 +284,11 @@ class HomeScreen extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: ControlledAnimation(
-                    duration: boxTween2.duration,
-                    tween: boxTween2,
+                    delay: Duration(
+                      milliseconds: 100,
+                    ),
+                    duration: boxTween.duration,
+                    tween: boxTween,
                     builder: (BuildContext context, animation) {
                       return Opacity(
                         opacity: animation['opacity'],
@@ -273,7 +297,7 @@ class HomeScreen extends StatelessWidget {
                           child: _box(
                             context,
                             'Deaths',
-                            provider.stats.deaths.toString(),
+                            formatter.format(provider.stats.deaths),
                           ),
                         ),
                       );
@@ -282,8 +306,11 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: ControlledAnimation(
-                    duration: boxTween2.duration,
-                    tween: boxTween2,
+                    delay: Duration(
+                      milliseconds: 100,
+                    ),
+                    duration: boxTween.duration,
+                    tween: boxTween,
                     builder: (BuildContext context, animation) {
                       return Opacity(
                         opacity: animation['opacity'],
@@ -292,7 +319,7 @@ class HomeScreen extends StatelessWidget {
                           child: _box(
                             context,
                             'Death Rate',
-                            '${provider.stats.deathRate.toString()}%',
+                            '${provider.stats.deathRate.toStringAsFixed(1)}%',
                           ),
                         ),
                       );
@@ -303,16 +330,28 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 50.0,
+            height: 30.0,
           ),
           Text(
             "last updated: ${timeago.format(provider.stats.lastUpdated)}",
-            style: Theme.of(context).textTheme.caption,
+            style: Theme.of(context).textTheme.caption.copyWith(
+                  fontWeight: FontWeight.normal,
+                ),
           ),
+          _refreshButton(context),
           SizedBox(
             height: 20.0,
           ),
-          _refreshButton(context),
+          rssProvider.feed.isNotEmpty
+              ? _news(context)
+              : Container(
+                  padding: EdgeInsets.all(
+                    20.0,
+                  ),
+                  child: SpinKitWave(
+                    color: Colors.white,
+                  ),
+                ),
         ],
       ),
     );

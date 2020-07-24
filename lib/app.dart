@@ -1,3 +1,4 @@
+import 'package:covid/providers/rss_provider.dart';
 import 'package:covid/providers/stats_provider.dart';
 import 'package:covid/screens/home.dart';
 import 'package:flutter/material.dart';
@@ -17,17 +18,17 @@ class CovidApp extends StatelessWidget {
       title: 'Covid PH',
       theme: ThemeData(
         textTheme: TextTheme(
-          headline: TextStyle(
+          headline1: TextStyle(
             color: Colors.white,
             fontSize: 40.0,
             fontWeight: FontWeight.bold,
           ),
-          title: TextStyle(
+          headline6: TextStyle(
             color: Colors.white,
             fontSize: 20.0,
             fontWeight: FontWeight.w300,
           ),
-          subtitle: TextStyle(
+          subtitle2: TextStyle(
             color: Colors.white,
             fontSize: 50.0,
             fontWeight: FontWeight.bold,
@@ -39,8 +40,11 @@ class CovidApp extends StatelessWidget {
           ),
         ),
       ),
-      home: ChangeNotifierProvider<StatsProvider>(
-        create: (_) => StatsProvider(),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<StatsProvider>(create: (_) => StatsProvider()),
+          ChangeNotifierProvider<RssProvider>(create: (_) => RssProvider()),
+        ],
         child: HomeScreen(),
       ),
     );
